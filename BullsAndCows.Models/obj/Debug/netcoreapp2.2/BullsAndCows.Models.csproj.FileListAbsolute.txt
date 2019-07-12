@@ -1,0 +1,9 @@
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\bin\Debug\netcoreapp2.2\BullsAndCows.Models.deps.json
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\bin\Debug\netcoreapp2.2\BullsAndCows.Models.dll
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\obj\Debug\netcoreapp2.2\BullsAndCows.Models.csprojAssemblyReference.cache
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\obj\Debug\netcoreapp2.2\BullsAndCows.Models.csproj.CoreCompileInputs.cache
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\obj\Debug\netcoreapp2.2\BullsAndCows.Models.AssemblyInfoInputs.cache
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\obj\Debug\netcoreapp2.2\BullsAndCows.Models.AssemblyInfo.cs
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\bin\Debug\netcoreapp2.2\BullsAndCows.Models.pdb
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\obj\Debug\netcoreapp2.2\BullsAndCows.Models.dll
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Models\obj\Debug\netcoreapp2.2\BullsAndCows.Models.pdb

@@ -1,5 +1,6 @@
 ﻿using System;
 using BullsAndCows.Data;
+using BullsAndCows.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;

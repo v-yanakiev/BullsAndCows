@@ -1,0 +1,12 @@
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\bin\Debug\netcoreapp2.2\BullsAndCows.Data.deps.json
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\bin\Debug\netcoreapp2.2\BullsAndCows.Data.dll
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\obj\Debug\netcoreapp2.2\BullsAndCows.Data.csproj.CoreCompileInputs.cache
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\obj\Debug\netcoreapp2.2\BullsAndCows.Data.AssemblyInfoInputs.cache
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\obj\Debug\netcoreapp2.2\BullsAndCows.Data.AssemblyInfo.cs
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\obj\Debug\netcoreapp2.2\BullsAndCows.Data.csprojAssemblyReference.cache
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\bin\Debug\netcoreapp2.2\BullsAndCows.Data.pdb
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\bin\Debug\netcoreapp2.2\BullsAndCows.Models.dll
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\bin\Debug\netcoreapp2.2\BullsAndCows.Models.pdb
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\obj\Debug\netcoreapp2.2\BullsAndCows.Data.csproj.CopyComplete
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\obj\Debug\netcoreapp2.2\BullsAndCows.Data.dll
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows.Data\obj\Debug\netcoreapp2.2\BullsAndCows.Data.pdb

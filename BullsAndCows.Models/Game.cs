@@ -13,7 +13,9 @@ namespace BullsAndCows.Models
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public bool WonByUser { get; set; }
-        public int UserProfileId { get; set; }
-        public UserProfile UserProfile { get; set; }
+        public string AINumber { get; set; }
+        public string UserNumber { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
     }
 }
