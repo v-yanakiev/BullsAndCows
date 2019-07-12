@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="info text-center">
+    <br />
+    <h1>
+        Play Bulls&Cows against an AI!
+    </h1>
+    <br />
+    <div style="margin-left:30%;margin-right:30%;">
+        <p style="display:inline-block;">
+            This application allows you to play the game "Bulls&Cows" against an AI,
+            and see how you rank against the top 25 players. You can 
+            <strong><a asp-area="Identity" asp-page="/Account/Register">sign up here</a></strong> to play, or
+            you can <strong><a asp-controller="Players" asp-action="Ranking">see the top 25 players here</a></strong>.
+        </p>
+    </div>
+
+</div>

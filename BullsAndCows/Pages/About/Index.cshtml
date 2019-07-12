@@ -1,0 +1,44 @@
+﻿@page
+@model BullsAndCows.Pages.About.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Rules of the Game</h3>
+<ul>
+    <li>
+        Bulls and cows is a lot like the commercial game Mastermind™️,
+        but using four-digit numbers instead of coloured pegs.
+    </li>
+    <li>
+        In this version, you play head-to-head with the computer, taking alternate turns to guess each other's number.
+    </li>
+    <li>
+        The winner is the first player to guess their number. You always play first and so have a small advantage.
+    </li>
+    <li>
+        Each guess is marked according to how many bulls (that is correct digits in correct locations) and how many cows (that is correct digits but in the wrong position) are present in the guess.
+        The number of bulls and cows for each guess is displayed in red to the right of the guess.
+    </li>
+    <li>
+        To play the game, first enter a number for the computer to guess (it doesn't cheat!)
+        at the top of the table, then enter your guesses at the bottom of your column.
+    </li>
+
+</ul>
+
+
+<br />
+<h3>How it works</h3>
+<ul>
+    <li>
+        The AI and record-keeping system operate on the back-end, in order to ensure that no cheating ensues.
+    </li>
+    <li>
+        There is no time-limit to any game which a player begins against the AI.
+    </li>
+    <li>
+        The client and the server communicate via AJAX and the ASP.NET API.
+    </li>
+</ul>
