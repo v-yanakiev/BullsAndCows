@@ -15,5 +15,8 @@ namespace BullsAndCows.Data
 
         }
         public DbSet<Game> Games { get; set; }
+        public DbSet<AIGuess> AIGuesses { get; set; }
+        public DbSet<UserGuess> UserGuesses  { get; set; }
+
     }
 }

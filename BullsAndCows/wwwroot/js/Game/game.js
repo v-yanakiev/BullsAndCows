@@ -1,6 +1,25 @@
 ﻿$(document).ready(init);
 function init() {
-    $("#initialForm").submit(function (event) { event.preventDefault(); submitFirstNumber(); });
+    checkForExistingGame();
+    function checkForExistingGame() {
+        UI().displayLoading();
+        $.get("/api/game/data", function (data) {
+            UI().hideLoading();
+            debugger;
+            if (data.gameExists) {
+                beginGame(data);
+            } else {
+                attachInitialHandler();
+            }
+            debugger;
+        })
+        .fail(function (data) {
+            debugger;
+        });
+    }
+    function attachInitialHandler() {
+        $("#initialForm").submit(function (event) { event.preventDefault(); submitFirstNumber(); });
+    }
     function submitFirstNumber() {
         let value = $("#numberWhichAIsSupposedToGuess").val();
         if (!$.isNumeric(value)) {
@@ -24,25 +43,40 @@ function init() {
     }
     
 }
-function beginGame(numberForAIToGuess) {
-    renderGame(numberForAIToGuess);
+function beginGame(data) {
+    renderGame(data.numberWhichAIMustGuess);
     UI().displaySuccessMessage("Okay, I have also thought of a number for you. You go first...");
+    attachHandlers();
     function renderGame(numberForAIToGuess) {
         $("#gamingField").text("");
         UI().hideLoading();
         $("#gamingField").load("/html/game.html", function () {
             $("#numberForAI").text(numberForAIToGuess);
+            attachHandlers();
         });
     }
+    function fillWithGuesses(data) {
+        let userRows = $("#userGuesses").children();
+        let br = 0;
+        for (let row of userRows) {
+            $($(row).children()[0]).text(data.userGuesses[br].value);
+            $($(row).children()[1]).text
+                (data.userGuesses[br].bullNumber + " bulls and " + data.userGuesses[br].cowNumber + " cows");
+            br++;
+        }
+    }
     function attachHandlers() {
-        $("#initialForm").submit(function () {
+        $("#userGuessForm").submit(function (e) {
+            e.preventDefault();
             let userGuess = $("#userGuess").val();
+            debugger;
             UI().displayLoading();
             $.post({
                 url: "/api/game/play",
-                data: JSON.stringify({ "userGuess": userGuess }),
+                data: JSON.stringify({ "value": userGuess }),
                 headers: { "Content-Type": "application/json" }
             }).done(function (data) {
+                debugger;
                 UI().hideLoading();
             }).fail(function (data) {
                 UI().hideLoading();
@@ -60,7 +94,7 @@ function UI() {
     function displaySuccessMessage(text) {
         $("#successAlert").text(text);
         $("#successAlert").show();
-        $("#successAlert").fadeOut(4000);
+        $("#successAlert").fadeOut(5000);
     }
     function displayConnectionError() {
         $("#errorMessage").text("Error, please try again...");

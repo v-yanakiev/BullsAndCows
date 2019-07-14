@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace BullsAndCows.Data.DTOs
 {
-    public class InitializeDTO
+    public class ValueOnlyGuessDTO
     {
         [Required]
-        [RegularExpression("^[0-9]{4}$")]
-        public string numberToGuess { get; set; }
+        public string Value { get; set; }
     }
 }

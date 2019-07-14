@@ -14,6 +14,8 @@ using BullsAndCows.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BullsAndCows.Models;
+using BullsAndCows.Services;
+using BullsAndCows.Services.Interfaces;
 
 namespace BullsAndCows
 {
@@ -44,6 +46,7 @@ namespace BullsAndCows
                 .AddEntityFrameworkStores<BACContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddScoped<IGameHandler, GameHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
