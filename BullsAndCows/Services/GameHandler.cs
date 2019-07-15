@@ -4,6 +4,7 @@ using BullsAndCows.Models;
 using BullsAndCows.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,27 +25,26 @@ namespace BullsAndCows.Services
         }
         public async Task<Game> GetActiveGame(HttpContext httpContext)
         {
-            User user = await this._userManager.GetUserAsync(httpContext.User);
+            User user = await _context.Users.Where(a => a.UserName == httpContext.User.Identity.Name).
+                Include(a => a.Games).ThenInclude(a => a.Guesses).ThenInclude(a=>a.GuessOutcome).FirstAsync();
             await _context.Entry(user).Collection(a => a.Games).LoadAsync();
             Game game = user.Games.FirstOrDefault(a => a.IsActive == true);
             return game;
         }
 
-        public async Task<GuessOutcomeDTO> GetAIGuessOutcome(HttpContext httpContext,ValueOnlyGuessDTO valueOnlyGuessDTO)
+        public async Task<GuessOutcome> GetAIGuessOutcome(HttpContext httpContext,string guess)
         {
             Game game = await GetActiveGame(httpContext);
-            string guess = valueOnlyGuessDTO.Value;
             string numberToBeGuessed = game.NumberWhichAIMustGuess;
             return GetGuessOutcome(guess, numberToBeGuessed);
         }
-        public async Task<GuessOutcomeDTO> GetUserGuessOutcome(HttpContext httpContext, ValueOnlyGuessDTO valueOnlyGuessDTO)
+        public async Task<GuessOutcome> GetUserGuessOutcome(HttpContext httpContext, string guess)
         {
             Game game = await GetActiveGame(httpContext);
-            string guess = valueOnlyGuessDTO.Value;
             string numberToBeGuessed = game.NumberWhichUserMustGuess;
             return GetGuessOutcome(guess, numberToBeGuessed);
         }
-        private GuessOutcomeDTO GetGuessOutcome(string guess,string numberToBeGuessed)
+        private GuessOutcome GetGuessOutcome(string guess,string numberToBeGuessed)
         {
             int bullNumber, cowNumber;
             bullNumber = cowNumber = 0;
@@ -62,7 +62,7 @@ namespace BullsAndCows.Services
                     cowNumber++;
                 }
             }
-            return new GuessOutcomeDTO() { BullNumber = bullNumber, CowNumber = cowNumber };
+            return new GuessOutcome() { BullsNumber = bullNumber, CowsNumber = cowNumber };
         }
     }
 }

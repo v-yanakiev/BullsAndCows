@@ -40,19 +40,18 @@ namespace BullsAndCows.Controllers
             {
                 return new GameDataDTO { GameExists = false };
             }
-            return new GameDataDTO
+
+            return new GameDataDTO()
             {
-                AIGuesses = game.AIGuesses.ToList().Select(a => new GuessDTO
+                AIGuesses = game.Guesses.Where(a=>a.GuessMaker==GuessMaker.AI).ToList().Select(a => new GuessDTO
                 {
                     Value = a.Value,
-                    GuessOutcome = new GuessOutcomeDTO()
-                    { BullNumber = a.BullNumber, CowNumber = a.CowNumber }
+                    GuessOutcome = new GuessOutcomeDTO(a.GuessOutcome)
                 }),
-                UserGuesses = game.AIGuesses.ToList().Select(a => new GuessDTO
+                UserGuesses = game.Guesses.Where(a => a.GuessMaker==GuessMaker.User).ToList().Select(a => new GuessDTO
                 {
                     Value = a.Value,
-                    GuessOutcome = new GuessOutcomeDTO()
-                    { BullNumber = a.BullNumber, CowNumber = a.CowNumber }
+                    GuessOutcome = new GuessOutcomeDTO(a.GuessOutcome)
                 }),
                 GameExists = true,
                 NumberWhichAIMustGuess=game.NumberWhichAIMustGuess
@@ -79,30 +78,57 @@ namespace BullsAndCows.Controllers
         }
         [HttpPost]
         [Route("play")]
-        public async Task<string> Play(ValueOnlyGuessDTO userGuessDTO)
+        public async Task<ComputerAnswerDTO> Play(ValueOnlyGuessDTO ValueOnlyUserGuessDTO)
         {
             if (!ModelState.IsValid)
             {
                 return null;
             }
-            Game game=await _gameHandler.GetActiveGame(HttpContext);
+            Game game = await _gameHandler.GetActiveGame(HttpContext);
+            _context.Attach(game);
             if (game == null)
             {
                 return null;
             }
-            GuessOutcomeDTO userGuessOutcomeDTO = await _gameHandler.GetUserGuessOutcome(HttpContext, userGuessDTO);
-            game.UserGuesses.Add(new UserGuess
+
+            GuessOutcome userGuessOutcome = await _gameHandler.GetUserGuessOutcome(HttpContext, ValueOnlyUserGuessDTO.Value);
+            Guess userGuess = new Guess()
             {
-                Value = userGuessDTO.Value,
-                BullNumber = userGuessOutcomeDTO.BullNumber,
-                CowNumber = userGuessOutcomeDTO.CowNumber
-            });
-            if (userGuessOutcomeDTO.BullNumber == userGuessDTO.Value.Length)
+                Value = ValueOnlyUserGuessDTO.Value,
+                GuessOutcome = userGuessOutcome,
+                GuessMaker=GuessMaker.User,
+                Game=game
+            };            
+            _context.Attach(userGuess);
+            
+            string AINumber=_rnd.Next(1000, 9999).ToString();
+            GuessOutcome aiGuessOutcomeDTO = await _gameHandler.GetAIGuessOutcome(HttpContext, AINumber);
+            Guess aiGuess = new Guess()
+            {
+                Value = AINumber,
+                GuessOutcome = aiGuessOutcomeDTO,
+                GuessMaker=GuessMaker.AI,
+                Game=game
+            };
+            _context.Attach(aiGuess);
+            
+            GuessDTO aiGuessDTO = new GuessDTO(aiGuess);
+            GuessDTO userGuessDTO = new GuessDTO(userGuess);
+            ComputerAnswerDTO computerAnswer = new ComputerAnswerDTO();
+            computerAnswer.AIGuess = aiGuessDTO;
+            computerAnswer.UserGuess = userGuessDTO;
+            if (userGuessOutcome.BullsNumber == ValueOnlyUserGuessDTO.Value.Length)//All numbers match - User wins
             {
                 game.WonByUser = true;
+                computerAnswer.UserVictory = true;
             }
-
-            return null;
+            else if (aiGuessOutcomeDTO.BullsNumber == AINumber.Length)//All numbers match - AI wins
+            {
+                game.WonByAI = true;
+                computerAnswer.AIVictory = true;
+            }
+            await _context.SaveChangesAsync();
+            return computerAnswer;
         }
     }
 }

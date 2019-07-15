@@ -8,10 +8,9 @@ namespace BullsAndCows.Models
     {
         public Game()
         {
-            this.AIGuesses = new List<AIGuess>();
-            this.UserGuesses = new List<UserGuess>();
+            this.Guesses = new List<Guess>();
         }
-        public int Id { get; set; }
+        public string Id { get; set; }
         public bool IsActive
         {
             get
@@ -23,8 +22,7 @@ namespace BullsAndCows.Models
         public bool WonByAI { get; set; }
         public string NumberWhichAIMustGuess { get; set; }
         public string NumberWhichUserMustGuess { get; set; }
-        public ICollection<AIGuess> AIGuesses { get; set; }
-        public ICollection<UserGuess> UserGuesses { get; set; }
+        public ICollection<Guess> Guesses { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
     }

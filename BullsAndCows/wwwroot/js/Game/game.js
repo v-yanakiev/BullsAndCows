@@ -5,13 +5,11 @@ function init() {
         UI().displayLoading();
         $.get("/api/game/data", function (data) {
             UI().hideLoading();
-            debugger;
             if (data.gameExists) {
                 beginGame(data);
             } else {
                 attachInitialHandler();
             }
-            debugger;
         })
         .fail(function (data) {
             debugger;
@@ -35,7 +33,7 @@ function init() {
             data: JSON.stringify({ "numberToGuess": value }),
             headers: {"Content-Type":"application/json"}
         }).done(function (data) {
-            beginGame(value);
+            beginGame(data);
         }).fail(function (data) {
             UI().hideLoading();
             UI().displayConnectionError();
@@ -44,7 +42,12 @@ function init() {
     
 }
 function beginGame(data) {
-    renderGame(data.numberWhichAIMustGuess);
+    debugger;
+    if (data.numberWhichAIMustGuess == undefined) {
+        renderGame(data);
+    } else {
+        renderGame(data.numberWhichAIMustGuess);
+    }
     UI().displaySuccessMessage("Okay, I have also thought of a number for you. You go first...");
     attachHandlers();
     function renderGame(numberForAIToGuess) {
@@ -53,15 +56,34 @@ function beginGame(data) {
         $("#gamingField").load("/html/game.html", function () {
             $("#numberForAI").text(numberForAIToGuess);
             attachHandlers();
+            fillWithGuesses(data);
         });
     }
     function fillWithGuesses(data) {
+        if (data.userGuesses == undefined) {
+            return;
+        }
+        debugger;
         let userRows = $("#userGuesses").children();
         let br = 0;
         for (let row of userRows) {
+            if (data.userGuesses.length <= br) {
+                break;
+            }
             $($(row).children()[0]).text(data.userGuesses[br].value);
             $($(row).children()[1]).text
-                (data.userGuesses[br].bullNumber + " bulls and " + data.userGuesses[br].cowNumber + " cows");
+                (UI().formatResult(data.userGuesses[br].guessOutcome));
+            br++;
+        }
+        br = 0;
+        let aiRows = $("#AIGuesses").children();
+        for (let row of aiRows) {
+            if (data.aiGuesses.length <= br) {
+                break;
+            }
+            $($(row).children()[0]).text(data.aiGuesses[br].value);
+            $($(row).children()[1]).text
+                (UI().formatResult(data.aiGuesses[br].guessOutcome));
             br++;
         }
     }
@@ -73,19 +95,51 @@ function beginGame(data) {
             UI().displayLoading();
             $.post({
                 url: "/api/game/play",
-                data: JSON.stringify({ "value": userGuess }),
+                data: JSON.stringify({ "Value": userGuess }),
                 headers: { "Content-Type": "application/json" }
             }).done(function (data) {
-                debugger;
+                fillNextRow(data);
                 UI().hideLoading();
+                if (data.aiVictory) {
+                    UI().gameOverMessage("AI Wins!");
+                    return;
+                } else if (data.userVictory) {
+                    UI().gameOverMessage("You Win!");
+                    return;
+                }
+
             }).fail(function (data) {
+                debugger;
                 UI().hideLoading();
                 UI().displayConnectionError();
             });
         });
     }
+    function fillNextRow(data) {
+        if (data.userGuess == undefined) {
+            return;
+        }
+        debugger;
+        let userRows = $("#userGuesses").children();
+        let test = userRows.children().first();
+        let rowToFill = userRows.filter(a => $(a).children().first().text() == "").first();
+        $(rowToFill.children()[0]).text(data.userGuess.value);
+        $(rowToFill.children()[1]).text(UI().formatResult(data.userGuess.guessOutcome));
+        let aiRows = $("#AIGuesses").children();
+        rowToFill = aiRows.filter(a => $(a).children().first().text() == "").first();
+        $(rowToFill.children()[0]).text(data.aiGuess.value);
+        $(rowToFill.children()[1]).text(UI().formatResult(data.aiGuess.guessOutcome));
+    }
 }
 function UI() {
+    function gameOverMessage(message) {
+        $("#gamingField").append($("<h2>").text(message));
+        $("#userGuessForm").off();
+        $("#userGuessForm").submit(function (e) { e.preventDefault(); });
+    }
+    function formatResult(result) {
+        return result.bullsNumber + " Bulls and " + result.cowsNumber + " Cows";
+    }
     function displayInvalidInputError() {
         $("#errorMessage").text("Invalid Input!");
         $("#errorMessage").show();
@@ -112,6 +166,8 @@ function UI() {
         displayConnectionError: displayConnectionError,
         displayLoading: displayLoading,
         hideLoading: hideLoading,
-        displaySuccessMessage: displaySuccessMessage
+        displaySuccessMessage: displaySuccessMessage,
+        formatResult: formatResult,
+        gameOverMessage: gameOverMessage
     };
 }

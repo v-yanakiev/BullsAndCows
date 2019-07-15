@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BullsAndCows.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,9 +8,16 @@ namespace BullsAndCows.Data.DTOs
 {
     public class GuessOutcomeDTO
     {
-        public int BullNumber { get; set; }
-        public int CowNumber { get; set; }
-        public bool AIVictory { get; set; }
-        public bool UserVictory { get; set; }
+        public GuessOutcomeDTO()
+        {
+
+        }
+        public GuessOutcomeDTO(GuessOutcome  guessOutcome)
+        {
+            this.BullsNumber = guessOutcome.BullsNumber;
+            this.CowsNumber = guessOutcome.CowsNumber;
+        }
+        public int BullsNumber { get; set; }
+        public int CowsNumber { get; set; }
     }
 }

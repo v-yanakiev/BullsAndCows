@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BullsAndCows.Data.Migrations
 {
-    public partial class asdf : Migration
+    public partial class _1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,20 @@ namespace BullsAndCows.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GuessOutcome",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    GuessId = table.Column<string>(nullable: true),
+                    BullsNumber = table.Column<int>(nullable: false),
+                    CowsNumber = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GuessOutcome", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,10 +171,9 @@ namespace BullsAndCows.Data.Migrations
                 name: "Games",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    IsActive = table.Column<bool>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     WonByUser = table.Column<bool>(nullable: false),
+                    WonByAI = table.Column<bool>(nullable: false),
                     NumberWhichAIMustGuess = table.Column<string>(nullable: true),
                     NumberWhichUserMustGuess = table.Column<string>(nullable: true),
                     UserId = table.Column<string>(nullable: true)
@@ -177,49 +190,31 @@ namespace BullsAndCows.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AIGuess",
+                name: "Guesses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<string>(nullable: false),
                     Value = table.Column<string>(nullable: true),
-                    GameId = table.Column<int>(nullable: false)
+                    GameId = table.Column<string>(nullable: true),
+                    GuessOutcomeId = table.Column<string>(nullable: true),
+                    GuessMaker = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AIGuess", x => x.Id);
+                    table.PrimaryKey("PK_Guesses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AIGuess_Games_GameId",
+                        name: "FK_Guesses_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserGuess",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Value = table.Column<string>(nullable: true),
-                    GameId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserGuess", x => x.Id);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_UserGuess_Games_GameId",
-                        column: x => x.GameId,
-                        principalTable: "Games",
+                        name: "FK_Guesses_GuessOutcome_GuessOutcomeId",
+                        column: x => x.GuessOutcomeId,
+                        principalTable: "GuessOutcome",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AIGuess_GameId",
-                table: "AIGuess",
-                column: "GameId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -266,16 +261,20 @@ namespace BullsAndCows.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGuess_GameId",
-                table: "UserGuess",
+                name: "IX_Guesses_GameId",
+                table: "Guesses",
                 column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Guesses_GuessOutcomeId",
+                table: "Guesses",
+                column: "GuessOutcomeId",
+                unique: true,
+                filter: "[GuessOutcomeId] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AIGuess");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -292,13 +291,16 @@ namespace BullsAndCows.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "UserGuess");
+                name: "Guesses");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Games");
+
+            migrationBuilder.DropTable(
+                name: "GuessOutcome");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

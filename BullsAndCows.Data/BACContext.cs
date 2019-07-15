@@ -14,9 +14,20 @@ namespace BullsAndCows.Data
         {
 
         }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Guess>().HasOne(a => a.GuessOutcome).WithOne(a => a.Guess).
+                HasForeignKey<Guess>(a => a.GuessOutcomeId).OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<Guess>().HasOne(a => a.Game).WithMany(a => a.Guesses).
+                HasForeignKey(a => a.GameId).OnDelete(DeleteBehavior.SetNull);
+            builder.Entity<Guess>().HasOne(a => a.GuessOutcome).WithOne(a => a.Guess).
+                HasForeignKey<Guess>(a => a.GuessOutcomeId).OnDelete(DeleteBehavior.SetNull);
+        }
         public DbSet<Game> Games { get; set; }
-        public DbSet<AIGuess> AIGuesses { get; set; }
-        public DbSet<UserGuess> UserGuesses  { get; set; }
+        public DbSet<Guess> Guesses { get; set; }
 
     }
 }

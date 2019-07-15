@@ -11,8 +11,8 @@ namespace BullsAndCows.Services.Interfaces
     public interface IGameHandler
     {
         Task<Game> GetActiveGame(HttpContext httpContext);
-        Task<GuessOutcomeDTO> GetUserGuessOutcome(HttpContext httpContext, ValueOnlyGuessDTO valueOnlyGuessDTO);
-        Task<GuessOutcomeDTO> GetAIGuessOutcome(HttpContext httpContext, ValueOnlyGuessDTO valueOnlyGuessDTO);
+        Task<GuessOutcome> GetUserGuessOutcome(HttpContext httpContext, string guess);
+        Task<GuessOutcome> GetAIGuessOutcome(HttpContext httpContext, string guess);
 
     }
 }

@@ -19,32 +19,10 @@ namespace BullsAndCows.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("BullsAndCows.Models.AIGuess", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BullNumber");
-
-                    b.Property<int>("CowNumber");
-
-                    b.Property<int>("GameId");
-
-                    b.Property<string>("Value");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("AIGuesses");
-                });
-
             modelBuilder.Entity("BullsAndCows.Models.Game", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("NumberWhichAIMustGuess");
 
@@ -61,6 +39,46 @@ namespace BullsAndCows.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("BullsAndCows.Models.Guess", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("GameId");
+
+                    b.Property<int>("GuessMaker");
+
+                    b.Property<string>("GuessOutcomeId");
+
+                    b.Property<string>("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("GuessOutcomeId")
+                        .IsUnique()
+                        .HasFilter("[GuessOutcomeId] IS NOT NULL");
+
+                    b.ToTable("Guesses");
+                });
+
+            modelBuilder.Entity("BullsAndCows.Models.GuessOutcome", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BullsNumber");
+
+                    b.Property<int>("CowsNumber");
+
+                    b.Property<string>("GuessId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GuessOutcome");
                 });
 
             modelBuilder.Entity("BullsAndCows.Models.User", b =>
@@ -112,27 +130,6 @@ namespace BullsAndCows.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("BullsAndCows.Models.UserGuess", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BullNumber");
-
-                    b.Property<int>("CowNumber");
-
-                    b.Property<int>("GameId");
-
-                    b.Property<string>("Value");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("UserGuesses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -249,14 +246,6 @@ namespace BullsAndCows.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("BullsAndCows.Models.AIGuess", b =>
-                {
-                    b.HasOne("BullsAndCows.Models.Game", "Game")
-                        .WithMany("AIGuesses")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("BullsAndCows.Models.Game", b =>
                 {
                     b.HasOne("BullsAndCows.Models.User", "User")
@@ -264,12 +253,17 @@ namespace BullsAndCows.Data.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("BullsAndCows.Models.UserGuess", b =>
+            modelBuilder.Entity("BullsAndCows.Models.Guess", b =>
                 {
                     b.HasOne("BullsAndCows.Models.Game", "Game")
-                        .WithMany("UserGuesses")
+                        .WithMany("Guesses")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("BullsAndCows.Models.GuessOutcome", "GuessOutcome")
+                        .WithOne("Guess")
+                        .HasForeignKey("BullsAndCows.Models.Guess", "GuessOutcomeId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

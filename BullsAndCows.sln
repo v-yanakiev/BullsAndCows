@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BullsAndCows", "BullsAndCow
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BullsAndCows.Models", "BullsAndCows.Models\BullsAndCows.Models.csproj", "{EAACF3B6-0698-4E6D-BE0E-0A42CE7A2809}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BullsAndCows.Data", "BullsAndCows.Data\BullsAndCows.Data.csproj", "{C65A899E-5840-4F7D-809E-D21DD1D178BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BullsAndCows.Data", "BullsAndCows.Data\BullsAndCows.Data.csproj", "{C65A899E-5840-4F7D-809E-D21DD1D178BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
