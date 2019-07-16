@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BullsAndCows.Data;
 using BullsAndCows.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -17,18 +18,22 @@ namespace BullsAndCows.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailSender _emailSender;
-
+        private readonly BACContext _context;
         public IndexModel(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            BACContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _context=context;
         }
 
         public string Username { get; set; }
+        public int Score { get; set; }
+        public double PercentageWins { get; set; }
 
         public bool IsEmailConfirmed { get; set; }
 
@@ -60,9 +65,12 @@ namespace BullsAndCows.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var email = await _userManager.GetEmailAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
+            await _context.Entry(user).Collection(a => a.Games).LoadAsync();
+            var score = user.Score;
+            var percentageWins = Math.Round(user.PercentageWins,1);
             Username = userName;
-
+            PercentageWins = percentageWins;
+            Score = score;
             Input = new InputModel
             {
                 Email = email,

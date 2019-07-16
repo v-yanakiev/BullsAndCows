@@ -57,7 +57,7 @@ namespace BullsAndCows.Services
             }
             for(int i = 0; i < guess.Length; i++)
             {
-                if (numberToBeGuessed.Contains(guess[i])&&(guess[i]!=numberToBeGuessed[i]))
+                if (guess.Contains(numberToBeGuessed[i])&&(guess[i]!=numberToBeGuessed[i]))
                 {
                     cowNumber++;
                 }

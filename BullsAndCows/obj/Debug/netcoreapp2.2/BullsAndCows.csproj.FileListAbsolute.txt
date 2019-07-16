@@ -69,3 +69,4 @@ C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows\obj\Debug\netcoreapp2.2\Bu
 C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows\obj\Debug\netcoreapp2.2\BullsAndCows.csproj.CopyComplete
 C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows\obj\Debug\netcoreapp2.2\BullsAndCows.dll
 C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows\obj\Debug\netcoreapp2.2\BullsAndCows.pdb
+C:\Users\vasko\source\repos\BullsAndCows\BullsAndCows\obj\Debug\netcoreapp2.2\Razor\Views\Players\Ranking.g.cshtml.cs

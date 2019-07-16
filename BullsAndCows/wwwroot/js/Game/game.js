@@ -8,17 +8,21 @@ function init() {
             if (data.gameExists) {
                 beginGame(data);
             } else {
-                attachInitialHandler();
+                loadInitial();
             }
         })
         .fail(function (data) {
-            debugger;
         });
     }
-    function attachInitialHandler() {
-        $("#initialForm").submit(function (event) { event.preventDefault(); submitFirstNumber(); });
+    function loadInitial() {
+        UI().displayLoading();
+        $("#gamingField").load("/html/index.html", function () {
+            UI().hideLoading();
+            $("#initialForm").submit(function (event) { event.preventDefault(); submitInitializingNumber(); });
+        });
     }
-    function submitFirstNumber() {
+    
+    function submitInitializingNumber() {
         let value = $("#numberWhichAIsSupposedToGuess").val();
         if (!$.isNumeric(value)) {
             UI().displayInvalidInputError();
@@ -33,6 +37,7 @@ function init() {
             data: JSON.stringify({ "numberToGuess": value }),
             headers: {"Content-Type":"application/json"}
         }).done(function (data) {
+            UI().hideLoading();
             beginGame(data);
         }).fail(function (data) {
             UI().hideLoading();
@@ -42,60 +47,52 @@ function init() {
     
 }
 function beginGame(data) {
-    debugger;
     if (data.numberWhichAIMustGuess == undefined) {
         renderGame(data);
     } else {
         renderGame(data.numberWhichAIMustGuess);
     }
-    UI().displaySuccessMessage("Okay, I have also thought of a number for you. You go first...");
-    attachHandlers();
     function renderGame(numberForAIToGuess) {
         $("#gamingField").text("");
-        UI().hideLoading();
+        UI().displayLoading();
         $("#gamingField").load("/html/game.html", function () {
             $("#numberForAI").text(numberForAIToGuess);
             attachHandlers();
             fillWithGuesses(data);
+            UI().hideLoading();
+            if (data.numberForAIToGuess!=undefined) {
+                UI().displaySuccessMessage("Okay, I have also thought of a number for you. You go first...");
+            }
         });
     }
     function fillWithGuesses(data) {
         if (data.userGuesses == undefined) {
             return;
         }
-        debugger;
-        let userRows = $("#userGuesses").children();
-        let br = 0;
-        for (let row of userRows) {
-            if (data.userGuesses.length <= br) {
-                break;
-            }
-            $($(row).children()[0]).text(data.userGuesses[br].value);
-            $($(row).children()[1]).text
-                (UI().formatResult(data.userGuesses[br].guessOutcome));
-            br++;
+        let userField = $("#userGuesses");
+        for (let guess of data.userGuesses) {
+            $(userField).append($("<tr>").append($("<td>").text(guess.value)).append($("<td>").text(UI().formatResult(guess.guessOutcome))));
         }
-        br = 0;
-        let aiRows = $("#AIGuesses").children();
-        for (let row of aiRows) {
-            if (data.aiGuesses.length <= br) {
-                break;
-            }
-            $($(row).children()[0]).text(data.aiGuesses[br].value);
-            $($(row).children()[1]).text
-                (UI().formatResult(data.aiGuesses[br].guessOutcome));
-            br++;
+        let aiField = $("#AIGuesses");
+        for (let guess of data.aiGuesses) {
+            $(aiField).append($("<tr>").append($("<td>").text(guess.value)).append($("<td>").text(UI().formatResult(guess.guessOutcome))));
         }
     }
     function attachHandlers() {
         $("#userGuessForm").submit(function (e) {
             e.preventDefault();
-            let userGuess = $("#userGuess").val();
-            debugger;
+            let value = $("#userGuess").val();
+            if (!$.isNumeric(value)) {
+                UI().displayInvalidInputError();
+                return;
+            } else if (value.length != 4 || Number(value) < 0) {
+                UI().displayInvalidInputError();
+                return;
+            }
             UI().displayLoading();
             $.post({
                 url: "/api/game/play",
-                data: JSON.stringify({ "Value": userGuess }),
+                data: JSON.stringify({ "Value": value }),
                 headers: { "Content-Type": "application/json" }
             }).done(function (data) {
                 fillNextRow(data);
@@ -109,7 +106,6 @@ function beginGame(data) {
                 }
 
             }).fail(function (data) {
-                debugger;
                 UI().hideLoading();
                 UI().displayConnectionError();
             });
@@ -119,16 +115,14 @@ function beginGame(data) {
         if (data.userGuess == undefined) {
             return;
         }
-        debugger;
-        let userRows = $("#userGuesses").children();
-        let test = userRows.children().first();
-        let rowToFill = userRows.filter(a => $(a).children().first().text() == "").first();
-        $(rowToFill.children()[0]).text(data.userGuess.value);
-        $(rowToFill.children()[1]).text(UI().formatResult(data.userGuess.guessOutcome));
-        let aiRows = $("#AIGuesses").children();
-        rowToFill = aiRows.filter(a => $(a).children().first().text() == "").first();
-        $(rowToFill.children()[0]).text(data.aiGuess.value);
-        $(rowToFill.children()[1]).text(UI().formatResult(data.aiGuess.guessOutcome));
+        let userField = $("#userGuesses");
+        $(userField).append($("<tr>").append($("<td>").text(data.userGuess.value)).append($("<td>").text(UI().formatResult(data.userGuess.guessOutcome))));
+        if (data.aiGuess == null) {
+            return;
+        }
+        let aiField = $("#AIGuesses");
+        $(aiField).append($("<tr>").append($("<td>").text(data.aiGuess.value)).append($("<td>").text(UI().formatResult(data.aiGuess.guessOutcome))));
+
     }
 }
 function UI() {
@@ -138,7 +132,18 @@ function UI() {
         $("#userGuessForm").submit(function (e) { e.preventDefault(); });
     }
     function formatResult(result) {
-        return result.bullsNumber + " Bulls and " + result.cowsNumber + " Cows";
+        let toReturn = "";
+        if (result.bullsNumber == 1) {
+            toReturn += result.bullsNumber + " Bull and ";
+        } else {
+            toReturn += result.bullsNumber + " Bulls and ";
+        }
+        if (result.cowsNumber == 1) {
+            toReturn += result.cowsNumber + " Cow";
+        } else {
+            toReturn += result.cowsNumber + " Cows";
+        }
+        return toReturn;
     }
     function displayInvalidInputError() {
         $("#errorMessage").text("Invalid Input!");
@@ -156,7 +161,7 @@ function UI() {
         $("#errorMessage").fadeOut(2000);
     }
     function displayLoading() { 
-        $("#loading").fadeIn(100);
+        $("#loading").show();
     }
     function hideLoading() {
         $("#loading").hide();

@@ -100,8 +100,8 @@ namespace BullsAndCows.Controllers
                 Game=game
             };            
             _context.Attach(userGuess);
-            
-            string AINumber=_rnd.Next(1000, 9999).ToString();
+
+            string AINumber = _rnd.Next(1000, 9999).ToString();
             GuessOutcome aiGuessOutcomeDTO = await _gameHandler.GetAIGuessOutcome(HttpContext, AINumber);
             Guess aiGuess = new Guess()
             {
@@ -121,6 +121,7 @@ namespace BullsAndCows.Controllers
             {
                 game.WonByUser = true;
                 computerAnswer.UserVictory = true;
+                computerAnswer.AIGuess = null;
             }
             else if (aiGuessOutcomeDTO.BullsNumber == AINumber.Length)//All numbers match - AI wins
             {

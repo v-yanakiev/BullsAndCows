@@ -9,6 +9,7 @@ namespace BullsAndCows.Models
     public class Guess
     {
         public string Id { get; set; }
+        [Required]
         public string Value { get; set; }
         public string GameId { get; set; }
         public Game Game { get; set; }
