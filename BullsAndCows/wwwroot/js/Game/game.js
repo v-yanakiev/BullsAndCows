@@ -57,7 +57,7 @@ function beginGame(data) {
             attachHandlers();
             fillWithGuesses(data);
             UI().hideLoading();
-            if (data.numberForAIToGuess!=undefined) {
+            if (data.numberWhichAIMustGuess == undefined) {
                 UI().displaySuccessMessage("Okay, I have also thought of a number for you. You go first...");
             }
         });
