@@ -18,6 +18,7 @@ namespace BullsAndCows.Controllers
     [Authorize]
     public class GameController : ControllerBase
     {
+        private const int digitCount = 4;
         private BACContext _context;
         private UserManager<User> _userManager;
         private Random _rnd;
@@ -67,7 +68,7 @@ namespace BullsAndCows.Controllers
                 return null;
             }
             User user = await this._userManager.GetUserAsync(HttpContext.User);
-            int numberWhichUserMustGuess = _rnd.Next(1000, 9999);
+            string numberWhichUserMustGuess = GenerateUniqueDigitsNumber();
             user.Games.Add(new Game()
             {
                 NumberWhichUserMustGuess = numberWhichUserMustGuess.ToString(),
@@ -101,11 +102,11 @@ namespace BullsAndCows.Controllers
             };            
             _context.Attach(userGuess);
 
-            string AINumber = _rnd.Next(1000, 9999).ToString();
-            GuessOutcome aiGuessOutcomeDTO = await _gameHandler.GetAIGuessOutcome(HttpContext, AINumber);
+            string AIGuess = GenerateUniqueDigitsNumber();
+            GuessOutcome aiGuessOutcomeDTO = await _gameHandler.GetAIGuessOutcome(HttpContext, AIGuess);
             Guess aiGuess = new Guess()
             {
-                Value = AINumber,
+                Value = AIGuess,
                 GuessOutcome = aiGuessOutcomeDTO,
                 GuessMaker=GuessMaker.AI,
                 Game=game
@@ -123,13 +124,22 @@ namespace BullsAndCows.Controllers
                 computerAnswer.UserVictory = true;
                 computerAnswer.AIGuess = null;
             }
-            else if (aiGuessOutcomeDTO.BullsNumber == AINumber.Length)//All numbers match - AI wins
+            else if (aiGuessOutcomeDTO.BullsNumber == AIGuess.Length)//All numbers match - AI wins
             {
                 game.WonByAI = true;
                 computerAnswer.AIVictory = true;
             }
             await _context.SaveChangesAsync();
             return computerAnswer;
+        }
+        private string GenerateUniqueDigitsNumber()
+        {
+            string randomString = _rnd.Next(1000, 9999).ToString();
+            while (randomString.Distinct().Count() != digitCount)
+            {
+                randomString = _rnd.Next(1000, 9999).ToString();
+            }
+            return randomString;
         }
     }
 }

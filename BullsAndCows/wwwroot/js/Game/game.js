@@ -24,10 +24,7 @@ function init() {
     
     function submitInitializingNumber() {
         let value = $("#numberWhichAIsSupposedToGuess").val();
-        if (!$.isNumeric(value)) {
-            UI().displayInvalidInputError();
-            return;
-        } else if (value.length != 4 || Number(value) < 0) {
+        if (!isLegitimate(value)) {
             UI().displayInvalidInputError();
             return;
         }
@@ -82,10 +79,7 @@ function beginGame(data) {
         $("#userGuessForm").submit(function (e) {
             e.preventDefault();
             let value = $("#userGuess").val();
-            if (!$.isNumeric(value)) {
-                UI().displayInvalidInputError();
-                return;
-            } else if (value.length != 4 || Number(value) < 0) {
+            if (!isLegitimate(value)) {
                 UI().displayInvalidInputError();
                 return;
             }
@@ -124,6 +118,11 @@ function beginGame(data) {
         $(aiField).append($("<tr>").append($("<td>").text(data.aiGuess.value)).append($("<td>").text(UI().formatResult(data.aiGuess.guessOutcome))));
 
     }
+
+}
+function isLegitimate(value) {
+    let regex = /^(?!.*(.).*\1)\d{4}$/;
+    return regex.test(value);
 }
 function UI() {
     function gameOverMessage(message) {

@@ -9,7 +9,7 @@ namespace BullsAndCows.Data.DTOs
     public class ValueOnlyGuessDTO
     {
         [Required]
-        [RegularExpression("^[0-9]{4}$")]
+        [RegularExpression(@"^(?!.*(.).*\1)\d{4}$")]
         public string Value { get; set; }
     }
 }
