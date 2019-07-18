@@ -52,7 +52,7 @@ namespace BullsAndCows.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    GuessId = table.Column<string>(nullable: true),
+                    GuessId = table.Column<int>(nullable: false),
                     BullsNumber = table.Column<int>(nullable: false),
                     CowsNumber = table.Column<int>(nullable: false)
                 },
@@ -193,8 +193,9 @@ namespace BullsAndCows.Data.Migrations
                 name: "Guesses",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    Value = table.Column<string>(nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Value = table.Column<string>(nullable: false),
                     GameId = table.Column<string>(nullable: true),
                     GuessOutcomeId = table.Column<string>(nullable: true),
                     GuessMaker = table.Column<int>(nullable: false)

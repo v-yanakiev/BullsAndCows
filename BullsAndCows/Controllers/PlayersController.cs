@@ -15,7 +15,7 @@ namespace BullsAndCows.Controllers
     public class PlayersController : Controller
     {
         private const int NumberOfTopPlayersToShow = 25;
-        private BACContext _context;
+        private readonly BACContext _context;
 
 
         public PlayersController(BACContext context)

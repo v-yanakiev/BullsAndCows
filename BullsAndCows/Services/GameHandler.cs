@@ -5,6 +5,7 @@ using BullsAndCows.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,21 @@ namespace BullsAndCows.Services
 {
     public class GameHandler : IGameHandler
     {
-        private BACContext _context;
-        private UserManager<User> _userManager;
+        private readonly int NumberOfGuessesAIHasToMakeBeforeItStartsUsingAnOptimalStrategy;
+        //We use this variable so that the game will be easier for the player. 
+        //It may be altered to raise or lower the difficulty, so long as it remains >=1 .
 
-        public GameHandler(BACContext context, UserManager<User> userManager)
+        private readonly BACContext _context;
+        private readonly IAIHandler _aiHandler;
+        private readonly RNGHandler _rng;
+
+        public GameHandler(BACContext context,IAIHandler aIHandler,IOptions<AppSettings> appSettings)
         {
             this._context = context;
-            this._userManager = userManager;
-
+            this._aiHandler = aIHandler;
+            this._rng = new RNGHandler(appSettings);
+            this.NumberOfGuessesAIHasToMakeBeforeItStartsUsingAnOptimalStrategy=
+                appSettings.Value.NumberOfGuessesAIHasToMakeBeforeItStartsUsingAnOptimalStrategy;
         }
         public async Task<Game> GetActiveGame(HttpContext httpContext)
         {
@@ -30,6 +38,19 @@ namespace BullsAndCows.Services
             await _context.Entry(user).Collection(a => a.Games).LoadAsync();
             Game game = user.Games.FirstOrDefault(a => a.IsActive == true);
             return game;
+        }
+
+        public async Task<string> GetAIGuess(HttpContext httpContext)
+        {
+            Game game = await GetActiveGame(httpContext);
+            int numberOfGuessesAIHasAlreadyMade = game.Guesses.Count(a => a.GuessMaker == GuessMaker.AI);
+            if (numberOfGuessesAIHasAlreadyMade < NumberOfGuessesAIHasToMakeBeforeItStartsUsingAnOptimalStrategy)
+            {
+                string randomGuess = GenerateUniqueDigitsNumber();
+                return randomGuess;
+            }
+            string guess = this._aiHandler.GetNextAIMove(game);
+            return guess;
         }
 
         public async Task<GuessOutcome> GetAIGuessOutcome(HttpContext httpContext,string guess)
@@ -44,13 +65,14 @@ namespace BullsAndCows.Services
             string numberToBeGuessed = game.NumberWhichUserMustGuess;
             return GetGuessOutcome(guess, numberToBeGuessed);
         }
+        
         private GuessOutcome GetGuessOutcome(string guess,string numberToBeGuessed)
         {
             int bullNumber, cowNumber;
             bullNumber = cowNumber = 0;
             for(int i = 0; i < guess.Length; i++)
             {
-                if (guess[i] == numberToBeGuessed[i])
+                if (guess[i] ==numberToBeGuessed[i])
                 {
                     bullNumber++;
                 }
@@ -64,5 +86,10 @@ namespace BullsAndCows.Services
             }
             return new GuessOutcome() { BullsNumber = bullNumber, CowsNumber = cowNumber };
         }
+        public string GenerateUniqueDigitsNumber()
+        {
+            return this._rng.GenerateUniqueDigitsNumber();
+        }
+        
     }
 }

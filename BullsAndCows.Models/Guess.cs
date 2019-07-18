@@ -8,7 +8,7 @@ namespace BullsAndCows.Models
     public enum GuessMaker { AI,User}
     public class Guess
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Value { get; set; }
         public string GameId { get; set; }

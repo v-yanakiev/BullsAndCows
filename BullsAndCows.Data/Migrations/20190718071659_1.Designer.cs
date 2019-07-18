@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BullsAndCows.Data.Migrations
 {
     [DbContext(typeof(BACContext))]
-    [Migration("20190715204258_1")]
+    [Migration("20190718071659_1")]
     partial class _1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,8 +45,9 @@ namespace BullsAndCows.Data.Migrations
 
             modelBuilder.Entity("BullsAndCows.Models.Guess", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("GameId");
 
@@ -54,7 +55,8 @@ namespace BullsAndCows.Data.Migrations
 
                     b.Property<string>("GuessOutcomeId");
 
-                    b.Property<string>("Value");
+                    b.Property<string>("Value")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -76,7 +78,7 @@ namespace BullsAndCows.Data.Migrations
 
                     b.Property<int>("CowsNumber");
 
-                    b.Property<string>("GuessId");
+                    b.Property<int>("GuessId");
 
                     b.HasKey("Id");
 

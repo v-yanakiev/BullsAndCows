@@ -43,8 +43,9 @@ namespace BullsAndCows.Data.Migrations
 
             modelBuilder.Entity("BullsAndCows.Models.Guess", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("GameId");
 
@@ -75,7 +76,7 @@ namespace BullsAndCows.Data.Migrations
 
                     b.Property<int>("CowsNumber");
 
-                    b.Property<string>("GuessId");
+                    b.Property<int>("GuessId");
 
                     b.HasKey("Id");
 

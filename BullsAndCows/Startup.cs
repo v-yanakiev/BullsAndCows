@@ -37,7 +37,7 @@ namespace BullsAndCows
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            services.Configure<AppSettings>(Configuration);
             services.AddDbContext<BACContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -47,6 +47,7 @@ namespace BullsAndCows
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IGameHandler, GameHandler>();
+            services.AddScoped<IAIHandler, AIHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

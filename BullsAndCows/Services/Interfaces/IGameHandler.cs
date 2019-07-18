@@ -13,6 +13,7 @@ namespace BullsAndCows.Services.Interfaces
         Task<Game> GetActiveGame(HttpContext httpContext);
         Task<GuessOutcome> GetUserGuessOutcome(HttpContext httpContext, string guess);
         Task<GuessOutcome> GetAIGuessOutcome(HttpContext httpContext, string guess);
-
+        Task<string> GetAIGuess(HttpContext httpContext);
+        string GenerateUniqueDigitsNumber();
     }
 }

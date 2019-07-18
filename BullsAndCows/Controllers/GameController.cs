@@ -18,17 +18,14 @@ namespace BullsAndCows.Controllers
     [Authorize]
     public class GameController : ControllerBase
     {
-        private const int digitCount = 4;
-        private BACContext _context;
-        private UserManager<User> _userManager;
-        private Random _rnd;
-        private IGameHandler _gameHandler;
+        private readonly BACContext _context;
+        private readonly UserManager<User> _userManager;
+        private readonly IGameHandler _gameHandler;
 
         public GameController(BACContext context, UserManager<User> userManager, IGameHandler gameHandler)
         {
             this._context = context;
             this._userManager = userManager;
-            _rnd = new Random();
             _gameHandler = gameHandler;
         }
         [HttpGet]
@@ -68,7 +65,7 @@ namespace BullsAndCows.Controllers
                 return null;
             }
             User user = await this._userManager.GetUserAsync(HttpContext.User);
-            string numberWhichUserMustGuess = GenerateUniqueDigitsNumber();
+            string numberWhichUserMustGuess = _gameHandler.GenerateUniqueDigitsNumber();
             user.Games.Add(new Game()
             {
                 NumberWhichUserMustGuess = numberWhichUserMustGuess.ToString(),
@@ -102,7 +99,7 @@ namespace BullsAndCows.Controllers
             };            
             _context.Attach(userGuess);
 
-            string AIGuess = GenerateUniqueDigitsNumber();
+            string AIGuess = await _gameHandler.GetAIGuess(HttpContext);
             GuessOutcome aiGuessOutcomeDTO = await _gameHandler.GetAIGuessOutcome(HttpContext, AIGuess);
             Guess aiGuess = new Guess()
             {
@@ -115,9 +112,11 @@ namespace BullsAndCows.Controllers
             
             GuessDTO aiGuessDTO = new GuessDTO(aiGuess);
             GuessDTO userGuessDTO = new GuessDTO(userGuess);
-            ComputerAnswerDTO computerAnswer = new ComputerAnswerDTO();
-            computerAnswer.AIGuess = aiGuessDTO;
-            computerAnswer.UserGuess = userGuessDTO;
+            ComputerAnswerDTO computerAnswer = new ComputerAnswerDTO
+            {
+                AIGuess = aiGuessDTO,
+                UserGuess = userGuessDTO
+            };
             if (userGuessOutcome.BullsNumber == ValueOnlyUserGuessDTO.Value.Length)//All numbers match - User wins
             {
                 game.WonByUser = true;
@@ -132,14 +131,6 @@ namespace BullsAndCows.Controllers
             await _context.SaveChangesAsync();
             return computerAnswer;
         }
-        private string GenerateUniqueDigitsNumber()
-        {
-            string randomString = _rnd.Next(1000, 9999).ToString();
-            while (randomString.Distinct().Count() != digitCount)
-            {
-                randomString = _rnd.Next(1000, 9999).ToString();
-            }
-            return randomString;
-        }
+        
     }
 }
